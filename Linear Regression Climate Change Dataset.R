@@ -74,6 +74,10 @@ summary(climate_linreg)
 #Which variables are significant in the model? 
 CO2,Aerosols,CFC.12,N2O
 
+#Handling Outliers
+climate_change$Aerosols=sapply(climate_change$Aerosols,function(x){ ifelse(x>0.0132,0.0132,x)})
+climate_change$CFC.12=sapply(climate_change$CFC.12,function(x){ ifelse(x>470.338,470.338,x)})
+
 #build a linear regression model to predict the dependent variable 
 climate_linreg=lm(Temp~CO2+N2O+Aerosols+CFC.12,data=climate_change)
 summary(climate_linreg)
