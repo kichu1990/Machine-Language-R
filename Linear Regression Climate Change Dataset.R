@@ -1,4 +1,4 @@
-setwd("C:\\Users\\abhic6\\Downloads")
+setwd("D:\\Study  Materials\\R Language\\DataSet")
 climate_change=read.csv("climate_change.csv")
 
 View(climate_change)
@@ -48,12 +48,16 @@ boxplot(climate_change$CFC.12)
 Q1_Aerosol=quantile(climate_change$Aerosols,0.25)
 Q2_Aerosol=quantile(climate_change$Aerosols,0.50)
 Q3_Aerosol=quantile(climate_change$Aerosols,0.75)
+
 IQR_Aerosol=Q3_Aerosol-Q1_Aerosol
 
 Q1_CFC.12=quantile(climate_change$CFC.12,0.25)
 Q2_CFC.12=quantile(climate_change$CFC.12,0.50)
 Q3_CFC.12=quantile(climate_change$CFC.12,0.75)
 IQR_CFC.12=Q3_CFC.12-Q1_CFC.12
+
+Q1_CFC.12-(1.5*IQR_CFC.12)
+Q3_Aerosol+(1.5*IQR_Aerosol)
 
 colnames(climate_change)[colnames(climate_change)=="CFC.12"]="CFC_12"
 colnames(climate_change)[colnames(climate_change)=="CFC.11"]="CFC_11"
@@ -75,8 +79,8 @@ summary(climate_linreg)
 CO2,Aerosols,CFC.12,N2O
 
 #Handling Outliers
-climate_change$Aerosols=sapply(climate_change$Aerosols,function(x){ ifelse(x>0.0132,0.0132,x)})
-climate_change$CFC.12=sapply(climate_change$CFC.12,function(x){ ifelse(x>470.338,470.338,x)})
+climate_change$Aerosols=sapply(climate_change$Aerosols,function(x){ ifelse(x>0.0273,0.0273,x)})
+climate_change$CFC.12=sapply(climate_change$CFC.12,function(x){ ifelse(x<370.2405,370.2405,x)})
 
 #build a linear regression model to predict the dependent variable 
 climate_linreg=lm(Temp~CO2+N2O+Aerosols+CFC.12,data=climate_change)
@@ -89,7 +93,7 @@ summary(climate_linreg)
 SSE=
 MAPE=
 RMSE=
-
+  
 #Remove the insignificant variable and re run the model. What effect did it have on R2 and Adjusted R2? 
 climate_linreg_New=lm(Temp~CO2+Aerosols+CFC.12,data=climate_change)
 summary(climate_linreg_New)
@@ -102,7 +106,3 @@ summary(climate_linreg_New)
 SSE=
 MAPE=
 RMSE=
-
-#What is the NULL hypothesis in case of the variable Aerosols? 
-#Aerosols does not influence Temp ie B=0(H0),alternate Hypothesis B!=0
-#if we observe the P value it is leass than 5% so we reject the Null Hypothesis.
