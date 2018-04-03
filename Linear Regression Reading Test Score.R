@@ -91,6 +91,8 @@ library(car)
 vif(Model1)
 #need to analyze output
 
+cor(pisaTrain_filled[,unlist(lapply(pisaTrain_filled, is.numeric))])
+
 Model2=lm(readingScore~grade+male+englishAtHome+computerForSchoolwork+read30MinsADay+minutesPerWeekEnglish+publicSchool+urban+schoolSize+expectBachelors+raceeth,data=pisaTrain_filled)
 summary(Model2)
 
