@@ -93,6 +93,52 @@ vif(Model1)
 
 cor(pisaTrain_filled[,unlist(lapply(pisaTrain_filled, is.numeric))])
 
+#plot Histogram for all Independent variable
+
+boxplot(pisaTrain_filled$minutesPerWeekEnglish)
+
+Q1_minutesPerWeekEnglish=quantile(pisaTrain_filled$minutesPerWeekEnglish,0.25)
+Q2_minutesPerWeekEnglish=quantile(pisaTrain_filled$minutesPerWeekEnglish,0.50)
+Q3_minutesPerWeekEnglish=quantile(pisaTrain_filled$minutesPerWeekEnglish,0.75)
+IQR_minutesPerWeekEnglish=Q3_minutesPerWeekEnglish-Q1_minutesPerWeekEnglish
+Q1_minutesPerWeekEnglish-(1.5*IQR_minutesPerWeekEnglish)
+Q3_minutesPerWeekEnglish+(1.5*IQR_minutesPerWeekEnglish)
+
+pisaTrain_filled$minutesPerWeekEnglish=sapply(pisaTrain_filled$minutesPerWeekEnglish,function(x){ ifelse(x<120.75,120.75,x)})
+pisaTrain_filled$minutesPerWeekEnglish=sapply(pisaTrain_filled$minutesPerWeekEnglish,function(x){ ifelse(x>398.75,120.75,x)})
+
+boxplot(pisaTrain_filled$studentsInEnglish)
+Q1_studentsInEnglish=quantile(pisaTrain_filled$studentsInEnglish,0.25)
+Q2_studentsInEnglish=quantile(pisaTrain_filled$studentsInEnglish,0.50)
+Q3_studentsInEnglish=quantile(pisaTrain_filled$studentsInEnglish,0.75)
+IQR_studentsInEnglish=Q3_studentsInEnglish-Q1_studentsInEnglish
+Q1_studentsInEnglish-(1.5*IQR_studentsInEnglish)
+Q3_studentsInEnglish+(1.5*IQR_studentsInEnglish)
+
+pisaTrain_filled$studentsInEnglish=sapply(pisaTrain_filled$minutesPerWeekEnglish,function(x){ ifelse(x<5,5,x)})
+pisaTrain_filled$studentsInEnglish=sapply(pisaTrain_filled$minutesPerWeekEnglish,function(x){ ifelse(x>45,45,x)})
+
+
+boxplot(pisaTrain_filled$schoolSize)
+Q1_schoolSize=quantile(pisaTrain_filled$schoolSize,0.25)
+Q2_schoolSize=quantile(pisaTrain_filled$schoolSize,0.50)
+Q3_schoolSize=quantile(pisaTrain_filled$schoolSize,0.75)
+IQR_schoolSize=Q3_schoolSize-Q1_schoolSize
+Q1_schoolSize-(1.5*IQR_schoolSize)
+Q3_schoolSize+(1.5*IQR_schoolSize)
+
+pisaTrain_filled$schoolSize=sapply(pisaTrain_filled$schoolSize,function(x){ ifelse(x>3599.5,3599.5,x)})
+
+boxplot(pisaTrain_filled$grade)
+Q1_grade=quantile(pisaTrain_filled$grade,0.25)
+Q2_grade=quantile(pisaTrain_filled$grade,0.50)
+Q3_grade=quantile(pisaTrain_filled$grade,0.75)
+IQR_grade=Q3_grade-Q1_grade
+Q1_grade-(1.5*IQR_grade)
+Q3_grade+(1.5*IQR_grade)
+
+pisaTrain_filled$schoolSize=sapply(pisaTrain_filled$schoolSize,function(x){ ifelse(x>10,10,x)})
+
 Model2=lm(readingScore~grade+male+englishAtHome+computerForSchoolwork+read30MinsADay+minutesPerWeekEnglish+publicSchool+urban+schoolSize+expectBachelors+raceeth,data=pisaTrain_filled)
 summary(Model2)
 
