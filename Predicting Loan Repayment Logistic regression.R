@@ -17,8 +17,7 @@ exp(-1)
 1/(1+exp(1))
 
 ###############################################################################################
-
-setwd("D:\\Study  Materials\\R Language\\DataSet")
+setwd("C:\\Users\\abhic6\\Documents\\R")
 loans = read.csv("loans.csv")
 
 #What proportion of the loans in the dataset were not paid in full? 
@@ -33,11 +32,9 @@ sapply(loans,function(x){sum(is.na(x))})
 View(loans)
 str(loans)
 loans$inq.last.6mths=as.factor(loans$inq.last.6mths)
-loans$delinq.2yrs =as.factor(loans$delinq.2yrs )
 loans$pub.rec =as.factor(loans$pub.rec)
 loans$credit.policy =as.factor(loans$credit.policy)
 loans$not.fully.paid =as.factor(loans$not.fully.paid)
-
 
 boxplot(loans$days.with.cr.line)
 missing = subset(loans, is.na(log.annual.inc) | is.na(days.with.cr.line) | is.na(revol.util) | 
@@ -69,6 +66,7 @@ summary(loans_imputed)
 
 #use the sample.split function to select the 70% of observations for the training set 
 #(the dependent variable for sample.split is not.fully.paid). 
+
 library(glmnet)
 library(caTools)
 set.seed(144)
@@ -81,12 +79,10 @@ cor(train_loans[,unlist(lapply(train_loans, is.numeric))])
 Model1=glm(not.fully.paid~.,data=train_loans,family="binomial")
 summary(Model1)
 
+Model2=glm(not.fully.paid~.-revol.util-delinq.2yrs-dti-days.with.cr.line,data=train_loans,family="binomial")
+summary(Model2)
+
 Model1$xlevels[["delinq.2yrs"]] <- union(Model1$xlevels[["delinq.2yrs"]], levels(test_loans$delinq.2yrs))
-
-
-pisaTrain_filled$raceeth = relevel(pisaTrain_filled$inq.last.6mths, "White")
-pisaTest_filled$raceeth = relevel(pisaTest_filled$raceeth, "White")
-
 
 #What is the accuracy of the logistic regression model? 
 test_loans$pred_test=predict(Model1,newdata=test_loans,type="response")
