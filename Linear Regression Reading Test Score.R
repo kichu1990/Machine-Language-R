@@ -1,5 +1,4 @@
 setwd("D:\\Study  Materials\\R Language\\DataSet")
-
 pisaTrain=read.csv("pisa2009train.csv")
 pisaTest=read.csv("pisa2009test.csv")
 
@@ -74,25 +73,6 @@ filled_data = mice(df_all,m=2,meth='pmm',seed=500)
 pisaTrain_filled=head(df_all,nrow(pisaTrain))
 pisaTest_filled=head(df_all,nrow(pisaTest))
 
-#To include unordered factors in a linear regression model, we define one level as the 
-#"reference level" and add a binary variable for each of the remaining levels. In this way, 
-#a factor with n levels is replaced by n-1 binary variables. The reference level is typically
-#selected to be the most frequently occurring level in the dataset.
-
-pisaTrain_filled$raceeth = relevel(pisaTrain_filled$raceeth, "White")
-pisaTest_filled$raceeth = relevel(pisaTest_filled$raceeth, "White")
-
-#Now, build a linear regression model (call it lmScore) using the training set to predict 
-#readingScore using all the remaining variables.
-Model1=lm(readingScore~.,data=pisaTrain_filled)
-summary(Model1)
-
-library(car)
-vif(Model1)
-#need to analyze output
-
-cor(pisaTrain_filled[,unlist(lapply(pisaTrain_filled, is.numeric))])
-
 #plot Histogram for all Independent variable
 
 boxplot(pisaTrain_filled$minutesPerWeekEnglish)
@@ -139,7 +119,29 @@ Q3_grade+(1.5*IQR_grade)
 
 pisaTrain_filled$schoolSize=sapply(pisaTrain_filled$schoolSize,function(x){ ifelse(x>10,10,x)})
 
-Model2=lm(readingScore~grade+male+englishAtHome+computerForSchoolwork+read30MinsADay+minutesPerWeekEnglish+publicSchool+urban+schoolSize+expectBachelors+raceeth,data=pisaTrain_filled)
+#To include unordered factors in a linear regression model, we define one level as the 
+#"reference level" and add a binary variable for each of the remaining levels. In this way, 
+#a factor with n levels is replaced by n-1 binary variables. The reference level is typically
+#selected to be the most frequently occurring level in the dataset.
+
+pisaTrain_filled$raceeth = relevel(pisaTrain_filled$raceeth, "White")
+pisaTest_filled$raceeth = relevel(pisaTest_filled$raceeth, "White")
+
+#Now, build a linear regression model (call it lmScore) using the training set to predict 
+#readingScore using all the remaining variables.
+Model1=lm(readingScore~.,data=pisaTrain_filled)
+summary(Model1)
+
+library(car)
+vif(Model1)
+
+#need to analyze output
+
+cor(pisaTrain_filled[,unlist(lapply(pisaTrain_filled, is.numeric))])
+
+Model2=lm(readingScore~grade+male+englishAtHome+computerForSchoolwork+read30MinsADay+preschool+
+          minutesPerWeekEnglish+publicSchool+urban+schoolSize+expectBachelors+raceeth+
+          motherHS+motherBachelors+fatherBachelors+motherBornUS+studentsInEnglish,data=pisaTrain_filled)
 summary(Model2)
 
 #What is the training-set root-mean squared error (RMSE) of lmScore?
