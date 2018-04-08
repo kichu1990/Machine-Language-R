@@ -3,12 +3,6 @@ climate_change=read.csv("climate_change.csv")
 
 View(climate_change)
 
-#Split the Data to Test and Train
-climate_change$rowid=runif(308)
-set.seed(400)
-climate_change=subset(climate_change,rowid<=0.7)
-climate_change_test=subset(climate_change,rowid>0.7)
-
 #Check if any NA Exists
 sum(is.na(climate_change))
 
@@ -82,12 +76,18 @@ CO2,Aerosols,CFC.12,N2O
 climate_change$Aerosols=sapply(climate_change$Aerosols,function(x){ ifelse(x>0.0273,0.0273,x)})
 climate_change$CFC.12=sapply(climate_change$CFC.12,function(x){ ifelse(x<370.2405,370.2405,x)})
 
+#Split the Data to Test and Train
+climate_change$rowid=runif(308)
+set.seed(400)
+climate_change_train=subset(climate_change,rowid<=0.7)
+climate_change_test=subset(climate_change,rowid>0.7)
+
 #build a linear regression model to predict the dependent variable 
-climate_linreg=lm(Temp~CO2+N2O+Aerosols+CFC.12,data=climate_change)
+climate_linreg=lm(Temp~CO2+N2O+Aerosols+CFC.12,data=climate_change_train)
 summary(climate_linreg)
 
 #Find the correlation between the actual & predicted values of Temp. Square this number and you should get the Multiple R2.
-(cor(climate_linreg$fitted.values,climate_change$Temp)^2)
+(cor(climate_linreg$fitted.values,climate_change_train$Temp)^2)
 
 #Find the RMSE, SSE and MAPE for the above Model. 
 SSE=
