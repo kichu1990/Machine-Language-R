@@ -173,6 +173,9 @@ sqrt(mean(Model2$residuals^2))
 predTest=predict(Model2,newdata=pisaTest_filled)
 summary(predTest)
 
+plot(pisaTest_filled$readingScore, type = "l", col = "green")
+lines(predTest,type = "l", col = "blue")
+
 #What is the sum of squared errors (SSE) of lmScore on the testing set?
 SSE=sum((pisaTest_filled$readingScore-predTest)^2)
 SSE
@@ -191,3 +194,7 @@ SST
 #What is the test-set R-squared value of lmScore?
 R2=1-(SSE/SST)
 R2
+
+#MAPE
+MAPE= (sum(abs(pisaTest_filled$readingScore - predTest)/pisaTest_filled$readingScore))/length(pisaTest_filled$readingScore)*100
+MAPE
