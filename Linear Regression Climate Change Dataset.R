@@ -89,20 +89,26 @@ summary(climate_linreg)
 #Find the correlation between the actual & predicted values of Temp. Square this number and you should get the Multiple R2.
 (cor(climate_linreg$fitted.values,climate_change_train$Temp)^2)
 
+prediction=predict(climate_linreg,newdata=climate_change_test)
+
 #Find the RMSE, SSE and MAPE for the above Model. 
-SSE=
-MAPE=
-RMSE=
+Error=climate_change_test$Temp-prediction
+SSE=sum((prediction-climate_change_test$Temp)^2)
+MAPE= sum(abs(Error)/climate_change_test$Temp)/nrow(climate_change_test)
+RMSE=sqrt(mean((prediction-climate_change_test$Temp)^2))
   
 #Remove the insignificant variable and re run the model. What effect did it have on R2 and Adjusted R2? 
-climate_linreg_New=lm(Temp~CO2+Aerosols+CFC.12,data=climate_change)
+climate_linreg_New=lm(Temp~CO2+Aerosols+CFC.12,data=climate_change_train)
 summary(climate_linreg_New)
+
+prediction_New=predict(climate_linreg_New,newdata=climate_change_test)
 
 #What effect did it have on R2 and Adjusted R2?
 #Adjusted R2 increased and R2 decreased
 #Observe the change closely. Does this validate the definition of R2 & Adj R2?
 
 #Find the RMSE, SSE and MAPE for the above Model. 
-SSE=
-MAPE=
-RMSE=
+Error_New=climate_change_test$Temp-prediction_New
+SSE=sum((prediction_New-climate_change_test$Temp)^2)
+MAPE= sum(abs(Error_New)/climate_change_test$Temp)/nrow(climate_change_test)
+RMSE=sqrt(mean((prediction_New-climate_change_test$Temp)^2))
