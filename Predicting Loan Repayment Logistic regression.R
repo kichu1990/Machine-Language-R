@@ -79,6 +79,33 @@ cor(train_loans[,unlist(lapply(train_loans, is.numeric))])
 Model1=glm(not.fully.paid~.,data=train_loans,family="binomial")
 summary(Model1)
 
+boxplot(train_loans$log.annual.inc)
+boxplot(train_loans$revol.bal)  
+boxplot(train_loans$installment)  
+boxplot(train_loans$fico)  
+
+Q1_log.annual.inc=quantile(train_loans$log.annual.inc,0.25)
+Q2_log.annual.inc=quantile(train_loans$log.annual.inc,0.50)
+Q3_log.annual.inc=quantile(train_loans$log.annual.inc,0.75)
+IQR_log.annual.inc=Q3_log.annual.inc-Q1_log.annual.inc
+Q1_log.annual.inc-(1.5*IQR_log.annual.inc)
+Q3_log.annual.inc+(1.5*IQR_log.annual.inc)
+
+
+Q1_revol.bal=quantile(train_loans$revol.bal,0.25)
+Q2_revol.bal=quantile(train_loans$revol.bal,0.50)
+Q3_revol.bal=quantile(train_loans$revol.bal,0.75)
+IQR_revol.bal=Q3_revol.bal-Q1_revol.bal
+Q1_revol.bal-(1.5*IQR_revol.bal)
+Q3_revol.bal+(1.5*IQR_revol.bal)
+
+Q1_installment=quantile(train_loans$installment,0.25)
+Q2_installment=quantile(train_loans$installment,0.50)
+Q3_installment=quantile(train_loans$installment,0.75)
+IQR_installment=Q3_installment-Q1_installment
+Q1_installment-(1.5*IQR_installment)
+Q3_installment+(1.5*IQR_installment)
+
 Model2=glm(not.fully.paid~.-revol.util-delinq.2yrs-dti-days.with.cr.line,data=train_loans,family="binomial")
 summary(Model2)
 
@@ -99,3 +126,73 @@ accuracy
 
 table(test_loans$not.fully.paid)
 2413/(2413+460)
+
+#Use the ROCR package to compute the test set AUC.
+library(ROCR)
+pred = prediction(test_loans$pred_test,test_loans$not.fully.paid)
+as.numeric(performance(pred, "auc")@y.values)
+
+bivariate = glm(not.fully.paid~int.rate, data=train_loans, family="binomial")
+summary(bivariate)
+cor(train_loans$fico,train_loans$int.rate)
+cor(train_loans$fico,train_loans$int.rate)
+cor(loans$int.rate,loans$not.fully.paid)
+
+#Make test set predictions for the bivariate model. 
+#What is the highest predicted probability of a loan not being paid in full on the testing set?
+pred.bivariate = predict(bivariate, newdata=test_loans, type="response")
+max(pred.bivariate)
+
+#What is the test set AUC of the bivariate model?
+prediction.bivariate = prediction(pred.bivariate, test_loans$not.fully.paid)
+as.numeric(performance(prediction.bivariate, "auc")@y.values)
+
+#How much does a $10 investment with an annual interest rate of 6% pay back after 3 years, using continuous compounding of interest? 
+#Hint: remember to convert the percentage to a proportion before doing the math. Enter the number of dollars, without the $ sign.
+10 * exp(0.06*3)
+
+#While the investment has value c * exp(rt) dollars after collecting interest, the investor had to pay $c for the investment. 
+#What is the profit to the investor if the investment is paid back in full?
+c * exp(rt) - c
+
+#Now, consider the case where the investor made a $c investment, but it was not paid back in full. Assume, conservatively, that no money 
+#was received from the borrower (often a lender will receive some but not all of the value of the loan, making this a pessimistic 
+#assumption of how much is received). What is the profit to the investor in this scenario?
+- c
+#A person's profit is what they get minus what they paid for it. In this case, the investor gets no money but paid c dollars, yielding 
+#a profit of -c dollars.
+
+#In order to evaluate the quality of an investment strategy, we need to compute this profit for each loan in the test set. 
+#For this variable, we will assume a $1 investment (aka c=1). To create the variable, we first assign to the profit for a fully paid loan,
+#exp(rt)-1, to every observation, and we then replace this value with -1 in the cases where the loan was not paid in full. 
+#All the loans in our dataset are 3-year loans, meaning t=3 in our calculations. Enter the following commands in your R console to create
+#this new variable:
+test_loans$profit = exp(test_loans$int.rate*3) - 1
+test_loans$profit[test_loans$not.fully.paid == 1] = -1
+#From summary(test$profit), we see the maximum profit for a $1 investment in any loan is $0.8895. 
+#Therefore, the maximum profit of a $10 investment is 10 times as large, or $8.895.
+
+#irst, use the subset() function to build a data frame called highInterest consisting of the test set loans with an interest rate of 
+#at least 15%.
+High_Interest_loan=subset(test_loans,int.rate>=0.15)
+View(High_Interest_loan)
+
+#What is the average profit of a $1 investment in one of these high-interest loans (do not include the $ sign in your answer)?
+summary(High_Interest_loan$profit)
+
+#What proportion of the high-interest loans were not paid back in full?
+prop.table(table(High_Interest_loan$not.fully.paid))
+
+#Use the subset() function to build a data frame called selectedLoans consisting of the high-interest loans with predicted risk not 
+#exceeding the cutoff we just computed. Check to make sure you have selected 100 loans for investment.
+#What is the profit of the investor, who invested $1 in each of these 100 loans (do not include the $ sign in your answer)?
+cutoff = sort(High_Interest_loan$pred_test, decreasing=FALSE)[100]
+selectedLoans = subset(High_Interest_loan, pred_test <= cutoff)
+selectedLoans
+
+#What is the profit of the investor, who invested $1 in each of these 100 loans 
+#(do not include the $ sign in your answer)?
+sum(selectedLoans$profit)
+
+#How many of 100 selected loans were not paid back in full?
+table(High_Interest_loan$not.fully.paid)
