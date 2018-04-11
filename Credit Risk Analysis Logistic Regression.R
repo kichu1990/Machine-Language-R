@@ -79,6 +79,17 @@ Credit_Risk_Train_data_filled$CoapplicantIncome=sapply(Credit_Risk_Train_data_fi
 
 cor(Credit_Risk_Train_data_filled[,unlist(lapply(Credit_Risk_Train_data_filled, is.numeric))])
 
+
+##Identify and eliminate Multicollinearity ##
+
+library(car)
+Mod1=glm(Loan_Status_Der~.,data = Credit_Risk_Train_data_filled)
+vif(Mod1)
+
+Mod2=glm(Loan_Status_Der~.,data = Credit_Risk_Train_data_filled)
+vif(Mod2)
+
+
 Model_1=glm(Loan_Status_Der~.-Loan_Status-Loan_ID,data=Credit_Risk_Train_data_filled,family = binomial)
 summary(Model_1)
 
