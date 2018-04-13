@@ -81,20 +81,29 @@ cor(Credit_Risk_Train_data_filled[,unlist(lapply(Credit_Risk_Train_data_filled, 
 
 
 ##Identify and eliminate Multicollinearity ##
-
-library(car)
-
 Model_1=glm(Loan_Status_Der~.-Loan_Status-Loan_ID,data=Credit_Risk_Train_data_filled,family = binomial)
 summary(Model_1)
+#AIC 587.72
 
 library("MASS")
-
 Credit_Risk_Test_data_filled$pred_test=predict(Model_1,newdata=Credit_Risk_Test_data_filled,type="response")
 table(Credit_Risk_Test_data_filled$Loan_Status_Der,Credit_Risk_Test_data_filled$pred_test > 0.5)
-Credit_Risk_Test_data_filled$pred_test_bi=sapply(Credit_Risk_Test_data_filled$pred_test,function(x){ ifelse(x>0.5,1,0)})
-
-table(Credit_Risk_Test_data_filled$Loan_Status_Der,Credit_Risk_Test_data_filled$pred_test_bi)
 
 #Accuaracy Of the Model
 (43+247)/nrow(Credit_Risk_Test_data_filled)
-#79%
+#79.01%
+
+step(Model_1)
+Model_2=glm(Loan_Status_Der ~ Married + Education + LoanAmount + 
+      Credit_History + Property_Area, data = Credit_Risk_Train_data_filled,family = binomial)
+summary(Model_2)
+#AIC: 576.48
+
+Credit_Risk_Test_data_filled$pred_test=predict(Model_2,newdata=Credit_Risk_Test_data_filled,type="response")
+table(Credit_Risk_Test_data_filled$Loan_Status_Der,Credit_Risk_Test_data_filled$pred_test > 0.5)
+
+#Accuaracy Of the Model
+(45+246)/nrow(Credit_Risk_Test_data_filled)
+#79.29%
+
+
