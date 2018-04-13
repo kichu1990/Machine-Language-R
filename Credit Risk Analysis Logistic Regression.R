@@ -98,4 +98,5 @@ Credit_Risk_Test_data_filled$pred_test_bi=sapply(Credit_Risk_Test_data_filled$pr
 
 table(Credit_Risk_Test_data_filled$Loan_Status_Der,Credit_Risk_Test_data_filled$pred_test_bi)
 
-print(chisq.test(Credit_Risk_Train_data_filled$Loan_Status_Der,Credit_Risk_Train_data_filled$Credit_History))
+#Accuaracy Of the Model
+(42+246)/nrow(Credit_Risk_Test_data_filled)
