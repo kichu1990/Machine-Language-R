@@ -85,18 +85,16 @@ cor(Credit_Risk_Train_data_filled[,unlist(lapply(Credit_Risk_Train_data_filled, 
 library(car)
 
 Model_1=glm(Loan_Status_Der~.-Loan_Status-Loan_ID,data=Credit_Risk_Train_data_filled,family = binomial)
-vif(Model_1)
-
-Model_2=glm(Loan_Status_Der~.-Loan_Status-Loan_ID-LoanAmount,data=Credit_Risk_Train_data_filled,family = binomial)
-vif(Model_2)
+summary(Model_1)
 
 library("MASS")
 
-Credit_Risk_Test_data_filled$pred_test=predict(Model_2,newdata=Credit_Risk_Test_data_filled,type="response")
+Credit_Risk_Test_data_filled$pred_test=predict(Model_1,newdata=Credit_Risk_Test_data_filled,type="response")
 table(Credit_Risk_Test_data_filled$Loan_Status_Der,Credit_Risk_Test_data_filled$pred_test > 0.5)
 Credit_Risk_Test_data_filled$pred_test_bi=sapply(Credit_Risk_Test_data_filled$pred_test,function(x){ ifelse(x>0.5,1,0)})
 
 table(Credit_Risk_Test_data_filled$Loan_Status_Der,Credit_Risk_Test_data_filled$pred_test_bi)
 
 #Accuaracy Of the Model
-(42+246)/nrow(Credit_Risk_Test_data_filled)
+(43+247)/nrow(Credit_Risk_Test_data_filled)
+#79%
