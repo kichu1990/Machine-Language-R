@@ -1,8 +1,6 @@
 setwd("D:\\Study  Materials\\R Language\\DataSet")
 statedata=read.csv("statedata.csv")
-
 str(statedata)
-
 plot(statedata$x,statedata$y)
 
 #Using the tapply command, determine which region of the US (West, North Central, South, or 
