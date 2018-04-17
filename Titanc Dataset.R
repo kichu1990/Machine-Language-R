@@ -60,7 +60,6 @@ df_Survived=grep("1",Titanic$Survived)
 #How many columns do you get?
 df_col_name_with_e=Titanic[, grep("e" ,colnames(Titanic))]
 df_col_name_with_e
-
 mean(Titanic$Age,Titanic$Sex=="male",na.rm=T)
 
 #Fill the Missing Values of Age separately for the Male and Female by their Averages
@@ -71,13 +70,10 @@ Titanic$Age[is.na(Titanic$Age) & Titanic$Sex=="female"]=27.91
 sum(is.na(Titanic$Age))
 
 #Create a new column with the first name of each passenger. Call this column "First name"
-
 #to split the Name we will have to convert the nmaes to characters first. Y?
 #because DataType Factors cannot be changed... All characters are by default read as
 #factors when you use the read.csv function.
 Titanic$Name=as.character(Titanic$Name)
-
-
 strsplit(Titanic$Name[1],"[.,]")
 
 Titanic$FirstName=sapply(Titanic$Name,function(x){strsplit(x,"[,.]")[[1]][3]})
