@@ -23,7 +23,6 @@ plot(Age,Income,type="b",xlab="ajdnjladncj",main="SCATTER PLOT")
 pnorm(80,80,5,lower.tail = F)
 pnorm(90,80,5,lower.tail = F)
 
-
 #example 3
 green=pnorm(600,580,100,lower.tail=F)
 pink=pnorm(500,580,100,lower.tail = T)
@@ -31,5 +30,3 @@ answer=1-(green+pink)
 answer
 #another way
 pnorm(600,580,100,lower.tail = T)-pnorm(500,580,100,lower.tail = T)
-
-
