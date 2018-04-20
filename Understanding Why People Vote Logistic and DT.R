@@ -63,3 +63,20 @@ prp(CARTsex,digits=6)
 logModel=glm(voting~ control + sex,data=Vote,family = binomial)
 summary(logModel)
 #Coefficient is negative, reflecting that women are less likely to vote.
+
+#The regression tree calculated the percentage voting exactly for every one of the four possibilities (Man, Not Control), (Man, Control),
+#(Woman, Not Control), (Woman, Control). Logistic regression has attempted to do the same, although it wasn't able to do as well because
+#it can't consider exactly the joint possibility of being a women and in the control group.
+
+#We can quantify this precisely. Create the following dataframe (this contains all of the possible values of sex and control), and 
+#evaluate your logistic regression using the predict function (where "LogModelSex" is the name of your logistic regression model that 
+#uses both control and sex):
+Possibilities = data.frame(sex=c(0,0,1,1),control=c(0,1,0,1))
+predict(logModel, newdata=Possibilities, type="response")
+
+#What is the absolute difference between the tree and the logistic regression for the (Woman, Control) case? 
+abs(.290456-0.2908065)
+
+#We're going to add a new term to our logistic regression now, that is the combination of the "sex" and "control" variables - so 
+#if this new variable is 1, that means the person is a woman AND in the control 
+group
