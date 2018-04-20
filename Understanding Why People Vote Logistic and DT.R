@@ -78,3 +78,19 @@ abs(.290456-0.2908065)
 
 #We're going to add a new term to our logistic regression now, that is the combination of the "sex" and "control" variables - so 
 #if this new variable is 1, that means the person is a woman AND in the control group
+logModel2 = glm(voting ~ sex + control + sex:control, data=Vote, family="binomial")
+summary(logModel2)
+#This coefficient is negative, so that means that a value of 1 in this variable decreases the chance of voting. 
+#This variable will have variable 1 if the person is a woman and in the control group.
+
+predict(logModel2, newdata=Possibilities, type="response")
+
+#what is the difference between the logistic regression model and the CART model for the (Woman, Control) case? 
+#Again, give your answer with five numbers after the decimal point.
+abs(0.2904558-0.290456)
+
+#trees can capture nonlinear relationships that logistic regression can not, but that we can get around this sometimes by using 
+#variables that are the combination of two variables.
+#We should not use all possible interaction terms in a logistic regression model due to overfitting. Even in this simple problem, 
+#we have four treatment groups and two values for sex. If we have an interaction term for every treatment variable with sex, 
+#we will double the number of variables. In smaller data sets, this could quickly lead to overfitting.
