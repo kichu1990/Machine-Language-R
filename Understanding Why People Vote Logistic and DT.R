@@ -53,7 +53,6 @@ CARTsex = rpart(voting ~ control + sex, data=Vote, cp=0.0)
 
 prp(CARTcontrol,digits=6)
 abs(0.296638-0.34)
-
 prp(CARTsex,digits=6)
 
 #Now, using the second tree (with control and sex), determine who is affected more by NOT being in the control group
@@ -78,5 +77,4 @@ predict(logModel, newdata=Possibilities, type="response")
 abs(.290456-0.2908065)
 
 #We're going to add a new term to our logistic regression now, that is the combination of the "sex" and "control" variables - so 
-#if this new variable is 1, that means the person is a woman AND in the control 
-group
+#if this new variable is 1, that means the person is a woman AND in the control group
