@@ -108,6 +108,13 @@ chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_dat
 table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Dependents)
 chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Dependents))
 
+#RF to Identify Important Variables
+library(randomForest)
+bestmtry = tuneRF(df, df$Loan_Status, stepFactor = 1.2, improve = 0.01, trace = T , plot = T)
+rf<-randomForest(Loan_Status~.,data = df, ntree=500,nodesize=2,mtry=3)
+print(rf)
+varImpPlot(rf)
+
 #Build Logistic regression Model
 Model_1=glm(Loan_Status_Der~ApplicantIncome+Credit_History+LoanAmount+CoapplicantIncome+
               Dependents+Property_Area+Loan_Amount_Term+Gender,data=df,family = binomial)
