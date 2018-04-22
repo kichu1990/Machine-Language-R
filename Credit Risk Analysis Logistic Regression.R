@@ -23,10 +23,8 @@ df_all$Dependents=as.character(df_all$Dependents)
 df_all$Dependents=as.factor(df_all$Dependents)
 
 df_all$Credit_History=as.factor(df_all$Credit_History)
-df_all$Loan_Status_Der=as.factor(df_all$Loan_Status_Der)
 
 #Handling NA in the Data
-
 df_all$Credit_History[is.na(df_all$Credit_History)]=1
 df_all$LoanAmount[is.na(df_all$LoanAmount)]=median(df_all$LoanAmount,na.rm=T)
 df_all$Loan_Amount_Term[is.na(df_all$Loan_Amount_Term)]=median(df_all$Loan_Amount_Term,na.rm=T)
@@ -164,19 +162,19 @@ confusionMatrix(table(df$Loan_Status,result))
 
 # Stepwise Algorithm to identify Important variables using AIC 
 step(Model_1)
-Model_3=glm(Loan_Status_Der ~ CoapplicantIncome + Credit_History + Property_Area, data = df,family = binomial)
+Model_3=glm(Loan_Status ~ CoapplicantIncome + Credit_History + Property_Area, data = df,family = binomial)
 summary(Model_3)
 #AIC: 582
 
 # Validating the model on Training Data
 resp_train = predict(Model_3,df, type = 'response')
 result_train = ifelse(res > 0.5, 1, 0)
-table(ActualValue = df$Loan_Status_Der, PredictedValue = resp_train >0.5)
+table(ActualValue = df$Loan_Status, PredictedValue = resp_train >0.5)
 (84+415)/nrow(df)
 
 # Validating the model on Testing Data
 resp_test = predict(Model_3,dft, type = 'response')
-table(ActualValue = dft$Loan_Status_Der, PredictedValue = resp_test >0.5)
+table(ActualValue = dft$Loan_Status, PredictedValue = resp_test >0.5)
 (58+289)/nrow(dft)
 
 # Finding the threshold using ROC curve
