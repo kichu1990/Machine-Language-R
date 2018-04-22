@@ -21,7 +21,6 @@ df_all$Dependents=as.character(df_all$Dependents)
 df_all$Dependents=as.factor(df_all$Dependents)
 
 df_all$Credit_History=as.factor(df_all$Credit_History)
-
 df_all$Loan_Status_Der=as.factor(df_all$Loan_Status_Der)
 
 #Handling NA in the Data
@@ -41,10 +40,6 @@ df_all$Self_Employed[is.na(df_all$Self_Employed)]="Yes"
 
 summary(df_all)
 str(df_all)
-
-#split back in the same ratoi as train & test
-Credit_Risk_Test_data_filled=head(df_all,nrow(Credit_Risk_Test_data))
-Credit_Risk_Train_data_filled=head(df_all,nrow(Credit_Risk_Train_data))
 
 #Handling Outliers in Data
 boxplot(Credit_Risk_Train_data_filled$LoanAmount)
@@ -79,31 +74,71 @@ Credit_Risk_Train_data_filled$CoapplicantIncome=sapply(Credit_Risk_Train_data_fi
 
 cor(Credit_Risk_Train_data_filled[,unlist(lapply(Credit_Risk_Train_data_filled, is.numeric))])
 
+#split back in the same ratoi as train & test
+Credit_Risk_Test_data_filled=tail(df_all,nrow(Credit_Risk_Test_data))
+Credit_Risk_Train_data_filled=head(df_all,nrow(Credit_Risk_Train_data))
 
-##Identify and eliminate Multicollinearity ##
-Model_1=glm(Loan_Status_Der~.-Loan_Status-Loan_ID,data=Credit_Risk_Train_data_filled,family = binomial)
+df = Credit_Risk_Train_data_filled[-1]
+dft = Credit_Risk_Test_data_filled[-1]
+
+#Build Logistic regression Model
+Model_1=glm(Loan_Status_Der~ApplicantIncome+Credit_History+LoanAmount+CoapplicantIncome+
+              Dependents+Property_Area+Loan_Amount_Term+Gender,data=df,family = binomial)
 summary(Model_1)
-#AIC 587.72
 
-library("MASS")
-Credit_Risk_Test_data_filled$pred_test=predict(Model_1,newdata=Credit_Risk_Test_data_filled,type="response")
-table(Credit_Risk_Test_data_filled$Loan_Status_Der,Credit_Risk_Test_data_filled$pred_test > 0.5)
-
-#Accuaracy Of the Model
-(43+247)/nrow(Credit_Risk_Test_data_filled)
-#79.01%
-
-step(Model_1)
-Model_2=glm(Loan_Status_Der ~ Married + Education + LoanAmount + 
-      Credit_History + Property_Area, data = Credit_Risk_Train_data_filled,family = binomial)
+#Build a Model with significant variables
+Model_2=glm(Loan_Status_Der~Credit_History+Property_Area,data=df,family = binomial)
 summary(Model_2)
-#AIC: 576.48
 
-Credit_Risk_Test_data_filled$pred_test=predict(Model_2,newdata=Credit_Risk_Test_data_filled,type="response")
-table(Credit_Risk_Test_data_filled$Loan_Status_Der,Credit_Risk_Test_data_filled$pred_test > 0.5)
+#Check the accuracy on the Train Data
+res =predict(Model_1, df, type = "response" )
+table(res)
+result = ifelse(res > 0.5, 1, 0)
+table(result)
+table(ActualValue = df$Loan_Status, PredictedValue = res >0.5)
+(84+415)/nrow(df)
 
+#Check the accuracy on the Test Data
+dft$pred_test=predict(Model_1,newdata=dft,type="response")
+table(dft$Loan_Status_Der,dft$pred_test > 0.5)
 #Accuaracy Of the Model
-(45+246)/nrow(Credit_Risk_Test_data_filled)
-#79.29%
+(58+289)/nrow(dft)
 
+# Finding the threshold using ROC curve
+library(ROCR) 
+library(Metrics)
+pr = prediction(dft$pred_test,dft$Loan_Status_Der)
+perf = performance(pr,measure = "tpr",x.measure = "fpr") 
+plot(perf,colorize=T)
+auc.temp=performance(pr,"auc")
+AUC=as.numeric(auc.temp@y.values)
+AUC
+resp = ifelse (resp_test > 0.2,1,0)
+table(dft$Loan_Status_Der,resp)
 
+# Stepwise Algorithm to identify Important variables using AIC 
+step(Model_1)
+Model_2=glm(Loan_Status_Der ~ CoapplicantIncomet + Credit_History + Property_Area, data = df,family = binomial)
+summary(Model_2)
+#AIC: 582
+
+# Validating the model on Training Data
+resp_train = predict(Model_3,df, type = 'response')
+table(ActualValue = df$Loan_Status_Der, PredictedValue = resp_train >0.5)
+(84+415)/nrow(df)
+
+# Validating the model on Testing Data
+resp_test = predict(Model_3,dft, type = 'response')
+table(ActualValue = dft$Loan_Status_Der, PredictedValue = resp_test >0.5)
+(58+289)/nrow(dft)
+
+# Finding the threshold using ROC curve
+library(ROCR) 
+library(Metrics)
+pr = prediction(resp_test,dft$Loan_Status_Der)
+perf = performance(pr,measure = "tpr",x.measure = "fpr") 
+plot(perf,colorize=T)
+auc.temp=performance(pr,"auc")
+AUC=as.numeric(auc.temp@y.values)
+resp = ifelse (resp_test > 0.2,1,0)
+table(dft$Loan_Status_Der,resp)
