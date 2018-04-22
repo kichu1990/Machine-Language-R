@@ -144,16 +144,17 @@ resp = ifelse (resp_test > 0.2,1,0)
 table(dft$Loan_Status_Der,resp)
 
 library(caret)
-confusionMatrix(table(df$Loan_Status_Der,result))
+confusionMatrix(table(df$Loan_Status,result))
 
 # Stepwise Algorithm to identify Important variables using AIC 
 step(Model_1)
-Model_2=glm(Loan_Status_Der ~ CoapplicantIncomet + Credit_History + Property_Area, data = df,family = binomial)
-summary(Model_2)
+Model_3=glm(Loan_Status_Der ~ CoapplicantIncome + Credit_History + Property_Area, data = df,family = binomial)
+summary(Model_3)
 #AIC: 582
 
 # Validating the model on Training Data
 resp_train = predict(Model_3,df, type = 'response')
+result_train = ifelse(res > 0.5, 1, 0)
 table(ActualValue = df$Loan_Status_Der, PredictedValue = resp_train >0.5)
 (84+415)/nrow(df)
 
@@ -174,4 +175,4 @@ resp = ifelse (resp_test > 0.2,1,0)
 table(dft$Loan_Status_Der,resp)
 
 library(caret)
-confusionMatrix(table(df$Loan_Status_Der,resp_train))
+confusionMatrix(table(df$Loan_Status,result_train))
