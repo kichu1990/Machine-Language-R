@@ -111,17 +111,17 @@ chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_dat
 #RF to Identify Important Variables
 library(randomForest)
 bestmtry = tuneRF(df, df$Loan_Status, stepFactor = 1.2, improve = 0.01, trace = T , plot = T)
-rf<-randomForest(Loan_Status~.,data = df, ntree=500,nodesize=2,mtry=3)
+rf=randomForest(Loan_Status~.,data = df, ntree=500,nodesize=2,mtry=3)
 print(rf)
 varImpPlot(rf)
 
 #Build Logistic regression Model
-Model_1=glm(Loan_Status_Der~ApplicantIncome+Credit_History+LoanAmount+CoapplicantIncome+
+Model_1=glm(Loan_Status~ApplicantIncome+Credit_History+LoanAmount+CoapplicantIncome+
               Dependents+Property_Area+Loan_Amount_Term+Gender,data=df,family = binomial)
 summary(Model_1)
 
 #Build a Model with significant variables
-Model_2=glm(Loan_Status_Der~Credit_History+Property_Area,data=df,family = binomial)
+Model_2=glm(Loan_Status~Credit_History+Property_Area,data=df,family = binomial)
 summary(Model_2)
 
 #Check the accuracy on the Train Data
@@ -143,7 +143,7 @@ AUC#0.7104562
 
 #Check the accuracy on the Test Data
 dft$pred_test=predict(Model_1,newdata=dft,type="response")
-table(dft$Loan_Status_Der,dft$pred_test > 0.5)
+table(dft$Loan_Status,dft$pred_test > 0.5)
 #Accuaracy Of the Model
 (58+289)/nrow(dft)
 
@@ -182,7 +182,7 @@ table(ActualValue = dft$Loan_Status_Der, PredictedValue = resp_test >0.5)
 # Finding the threshold using ROC curve
 library(ROCR) 
 library(Metrics)
-pr = prediction(resp_test,dft$Loan_Status_Der)
+pr = prediction(resp_test,dft$Loan_Status)
 perf = performance(pr,measure = "tpr",x.measure = "fpr") 
 plot(perf,colorize=T)
 auc.temp=performance(pr,"auc")
