@@ -5,7 +5,9 @@ Credit_Risk_Test_data=read.csv("Credit_Risk_Test_data.csv")
 #To use Rbind all the columnname in both the Dataset should be of same name
 colnames(Credit_Risk_Test_data)[colnames(Credit_Risk_Test_data)=="outcome"]="Loan_Status"
 df_all=rbind(Credit_Risk_Train_data,Credit_Risk_Test_data)
-df_all$Loan_Status_Der=sapply(df_all$Loan_Status,function(x){ ifelse(x=='Y',1,0)})
+df_all$Loan_Status = sapply(df_all$Loan_Status,function(x){ ifelse(x=='Y',1,0)})
+df_all$Loan_Status = as.character(df_all$Loan_Status)
+df_all$Loan_Status = as.factor(df_all$Loan_Status)
 
 #DataType Conversion
 df_all$Gender=as.character(df_all$Gender)
@@ -81,6 +83,31 @@ Credit_Risk_Train_data_filled=head(df_all,nrow(Credit_Risk_Train_data))
 df = Credit_Risk_Train_data_filled[-1]
 dft = Credit_Risk_Test_data_filled[-1]
 
+# Check the relation between the categorical variables
+table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Gender)
+chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Gender))
+
+table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Married)
+chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Married))
+
+table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Dependents)
+chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Dependents))
+
+table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Education)
+chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Education))
+
+table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Self_Employed)
+chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Self_Employed))
+
+table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Credit_History)
+chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Credit_History))
+
+table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Property_Area)
+chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Property_Area))
+
+table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Dependents)
+chisq.test(table(Credit_Risk_Train_data_filled$Loan_Status,Credit_Risk_Train_data_filled$Dependents))
+
 #Build Logistic regression Model
 Model_1=glm(Loan_Status_Der~ApplicantIncome+Credit_History+LoanAmount+CoapplicantIncome+
               Dependents+Property_Area+Loan_Amount_Term+Gender,data=df,family = binomial)
@@ -95,7 +122,7 @@ res =predict(Model_1, df, type = "response" )
 table(res)
 result = ifelse(res > 0.5, 1, 0)
 table(result)
-table(ActualValue = df$Loan_Status, PredictedValue = res >0.5)
+table(ActualValue = df$Loan_Status_Der, PredictedValue = res >0.5)
 (84+415)/nrow(df)
 
 #Check the accuracy on the Test Data
@@ -115,6 +142,9 @@ AUC=as.numeric(auc.temp@y.values)
 AUC
 resp = ifelse (resp_test > 0.2,1,0)
 table(dft$Loan_Status_Der,resp)
+
+library(caret)
+confusionMatrix(table(df$Loan_Status_Der,result))
 
 # Stepwise Algorithm to identify Important variables using AIC 
 step(Model_1)
@@ -142,3 +172,6 @@ auc.temp=performance(pr,"auc")
 AUC=as.numeric(auc.temp@y.values)
 resp = ifelse (resp_test > 0.2,1,0)
 table(dft$Loan_Status_Der,resp)
+
+library(caret)
+confusionMatrix(table(df$Loan_Status_Der,resp_train))
