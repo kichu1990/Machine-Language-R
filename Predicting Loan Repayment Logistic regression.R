@@ -60,6 +60,36 @@ loans_imputed = read.csv("loans_imputed.csv")
 summary(loans)
 summary(loans_imputed)
 
+loans$inq.last.6mths[is.na(loans$inq.last.6mths)]=0
+loans$pub.rec[is.na(loans$pub.rec)]=0
+loans$delinq.2yrs[is.na(loans$delinq.2yrs)]=0
+
+hist(loans$int.rate)
+hist(loans$log.annual.inc)
+hist(loans$days.with.cr.line)
+hist(loans$revol.util)
+loans$int.rate[is.na(loans$int.rate)]=mean(loans$int.rate,na.rm=T)
+loans$log.annual.inc[is.na(loans$log.annual.inc)]=mean(loans$log.annual.inc,na.rm=T)
+loans$days.with.cr.line[is.na(loans$days.with.cr.line)]=median(loans$days.with.cr.line,na.rm=T)
+loans$revol.util[is.na(loans$revol.util)]=median(loans$revol.util,na.rm=T)
+
+#Handling Outliers
+boxplot(loans$revol.bal)
+Q1_revol.bal=quantile(loans$revol.bal,0.25)
+Q2_revol.bal=quantile(loans$revol.bal,0.50)
+Q3_revol.bal=quantile(loans$revol.bal,0.75)
+IQR_revol.bal=Q3_revol.bal-Q1_revol.bal
+Q3_revol.bal+(1.5*IQR_revol.bal)
+loans$revol.bal=sapply(loans$revol.bal,function(x){ ifelse(x>40843.25,40843.25,x)})
+
+boxplot(loans$days.with.cr.line)
+Q1_days.with.cr.line=quantile(loans$days.with.cr.line,0.25)
+Q2_days.with.cr.line=quantile(loans$days.with.cr.line,0.50)
+Q3_days.with.cr.line=quantile(loans$days.with.cr.line,0.75)
+IQR_days.with.cr.line=Q3_days.with.cr.line-Q1_days.with.cr.line
+Q3_days.with.cr.line+(1.5*IQR_days.with.cr.line)
+loans$days.with.cr.line=sapply(loans$days.with.cr.line,function(x){ ifelse(x>10094.9,10094.9 ,x)})
+
 #What best describes the process we just used to handle missing values?
 #We predicted missing variable values using the available independent variables for each 
 #observation.
