@@ -135,33 +135,6 @@ cor(train_loans[,unlist(lapply(train_loans, is.numeric))])
 Model1=glm(not.fully.paid~.,data=train_loans,family="binomial")
 summary(Model1)
 
-boxplot(train_loans$log.annual.inc)
-boxplot(train_loans$revol.bal)  
-boxplot(train_loans$installment)  
-boxplot(train_loans$fico)  
-
-Q1_log.annual.inc=quantile(train_loans$log.annual.inc,0.25)
-Q2_log.annual.inc=quantile(train_loans$log.annual.inc,0.50)
-Q3_log.annual.inc=quantile(train_loans$log.annual.inc,0.75)
-IQR_log.annual.inc=Q3_log.annual.inc-Q1_log.annual.inc
-Q1_log.annual.inc-(1.5*IQR_log.annual.inc)
-Q3_log.annual.inc+(1.5*IQR_log.annual.inc)
-
-
-Q1_revol.bal=quantile(train_loans$revol.bal,0.25)
-Q2_revol.bal=quantile(train_loans$revol.bal,0.50)
-Q3_revol.bal=quantile(train_loans$revol.bal,0.75)
-IQR_revol.bal=Q3_revol.bal-Q1_revol.bal
-Q1_revol.bal-(1.5*IQR_revol.bal)
-Q3_revol.bal+(1.5*IQR_revol.bal)
-
-Q1_installment=quantile(train_loans$installment,0.25)
-Q2_installment=quantile(train_loans$installment,0.50)
-Q3_installment=quantile(train_loans$installment,0.75)
-IQR_installment=Q3_installment-Q1_installment
-Q1_installment-(1.5*IQR_installment)
-Q3_installment+(1.5*IQR_installment)
-
 Model2=glm(not.fully.paid~.-revol.util-delinq.2yrs-dti-days.with.cr.line,data=train_loans,family="binomial")
 summary(Model2)
 
