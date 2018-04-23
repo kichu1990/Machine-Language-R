@@ -108,6 +108,14 @@ IQR_int.rate=Q3_int.rate-Q1_int.rate
 Q3_int.rate+(1.5*IQR_int.rate)
 loans$int.rate=sapply(loans$int.rate,function(x){ ifelse(x>0.1959,0.1959,x)})
 
+boxplot(loans$installment)
+Q1_installment=quantile(loans$installment,0.25)
+Q2_installment=quantile(loans$installment,0.50)
+Q3_installment=quantile(loans$installment,0.75)
+IQR_installment=Q3_installment-Q1_installment
+Q3_installment+(1.5*IQR_installment)
+loans$installment=sapply(loans$installment,function(x){ ifelse(x>836.2512,836.2512,x)})
+
 #What best describes the process we just used to handle missing values?
 #We predicted missing variable values using the available independent variables for each 
 #observation.
