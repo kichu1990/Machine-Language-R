@@ -90,6 +90,24 @@ IQR_days.with.cr.line=Q3_days.with.cr.line-Q1_days.with.cr.line
 Q3_days.with.cr.line+(1.5*IQR_days.with.cr.line)
 loans$days.with.cr.line=sapply(loans$days.with.cr.line,function(x){ ifelse(x>10094.9,10094.9 ,x)})
 
+boxplot(loans$log.annual.inc)
+Q1_log.annual.inc=quantile(loans$log.annual.inc,0.25)
+Q2_log.annual.inc=quantile(loans$log.annual.inc,0.50)
+Q3_log.annual.inc=quantile(loans$log.annual.inc,0.75)
+IQR_log.annual.inc=Q3_log.annual.inc-Q1_log.annual.inc
+Q3_log.annual.inc+(1.5*IQR_log.annual.inc)
+Q1_log.annual.inc-(1.5*IQR_log.annual.inc)
+loans$log.annual.inc=sapply(loans$log.annual.inc,function(x){ ifelse(x>12.38696,12.38696 ,x)})
+loans$log.annual.inc=sapply(loans$log.annual.inc,function(x){ ifelse(x<9.461286,9.461286 ,x)})
+
+boxplot(loans$int.rate)
+Q1_int.rate=quantile(loans$int.rate,0.25)
+Q2_int.rate=quantile(loans$int.rate,0.50)
+Q3_int.rate=quantile(loans$int.rate,0.75)
+IQR_int.rate=Q3_int.rate-Q1_int.rate
+Q3_int.rate+(1.5*IQR_int.rate)
+loans$int.rate=sapply(loans$int.rate,function(x){ ifelse(x>0.1959,0.1959,x)})
+
 #What best describes the process we just used to handle missing values?
 #We predicted missing variable values using the available independent variables for each 
 #observation.
