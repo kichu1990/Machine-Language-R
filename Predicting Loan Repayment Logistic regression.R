@@ -35,6 +35,7 @@ loans$inq.last.6mths=as.factor(loans$inq.last.6mths)
 loans$pub.rec =as.factor(loans$pub.rec)
 loans$credit.policy =as.factor(loans$credit.policy)
 loans$not.fully.paid =as.factor(loans$not.fully.paid)
+loans$delinq.2yrs=as.factor(loans$delinq.2yrs)
 
 boxplot(loans$days.with.cr.line)
 missing = subset(loans, is.na(log.annual.inc) | is.na(days.with.cr.line) | is.na(revol.util) | 
@@ -134,7 +135,7 @@ cor(train_loans[,unlist(lapply(train_loans, is.numeric))])
 
 Model1=glm(not.fully.paid~.,data=train_loans,family="binomial")
 summary(Model1)
-#AIC: 5520.8
+#AIC: 5547
 
 #Checking accuracy on Train Data
 res =predict(Model1,train_loans,type = "response")
@@ -150,10 +151,24 @@ table(test_loans$not.fully.paid,test_loans$pred_test > 0.5)
 #Accuaracy Of the Model
 (2393+15)/nrow(test_loans) #0.8381483
 
+# Check the relation between the categorical variables
+table(train_loans$not.fully.paid,train_loans$credit.policy)
+chisq.test(table(train_loans$not.fully.paid,train_loans$credit.policy))
+
+table(train_loans$not.fully.paid,train_loans$inq.last.6mths )
+chisq.test(table(train_loans$not.fully.paid,train_loans$inq.last.6mths ))
+
+table(train_loans$not.fully.paid,train_loans$delinq.2yrs  )
+chisq.test(table(train_loans$not.fully.paid,train_loans$delinq.2yrs  ))
+
+table(train_loans$not.fully.paid,train_loans$pub.rec)
+chisq.test(table(train_loans$not.fully.paid,train_loans$pub.rec))
+
 #Building new Model based on Significance variable
-Model2=glm(not.fully.paid~.-revol.util-delinq.2yrs-dti-days.with.cr.line,data=train_loans,family="binomial")
+Model2=glm(not.fully.paid~credit.policy+purpose+installment+log.annual.inc+fico+inq.last.6mths+delinq.2yrs+pub.rec+revol.bal ,
+           data=train_loans,family="binomial")
 summary(Model2)
-#AIC: 5521.3
+#AIC: 5540.7
 
 #Checking accuracy on Train Data
 res =predict(Model2,train_loans,type = "response")
@@ -172,10 +187,10 @@ table(test_loans$not.fully.paid,test_loans$pred_test > 0.5)
 Model1$xlevels[["delinq.2yrs"]] <- union(Model1$xlevels[["delinq.2yrs"]], levels(test_loans$delinq.2yrs))
 
 #Doing Step wise Logistic Regression and Build Model
-Model3=glm(not.fully.paid~credit.policy + installment + purpose + revol.bal + log.annual.inc + fico + inq.last.6mths + 
-             pub.rec,data=train_loans,family="binomial")
+Model3=glm(not.fully.paid~credit.policy + purpose + installment + 
+             log.annual.inc + fico + revol.bal + inq.last.6mths + pub.rec,data=train_loans,family="binomial")
 summary(Model3)
-#AIC: 5514.3
+#AIC: 5530.1
 
 #What is the accuracy of the logistic regression model? 
 test_loans$pred_test=predict(Model1,newdata=test_loans,type="response")
