@@ -40,21 +40,19 @@ str(SongsTrain)
 #Build Logistic regression Model
 Model_1=glm(Top10~.,data=SongsTrain,family = binomial)
 summary(Model_1)
+AIC: 291.46
 
 #Build Model with all Significant vriables
-Model_2=glm(Top10 ~ timesignature + pitch + timbre_0_min + 
-      timbre_0_max + timbre_1_min + timbre_3_min + timbre_3_max + 
-      timbre_4_min + timbre_6_min  + timbre_10_min, 
-    family = binomial, data = SongsTrain)
+Model_2=glm(Top10 ~ timesignature + pitch + timbre_0_min  + timbre_1_min + timbre_3_min + timbre_3_max + 
+      timbre_4_min + timbre_6_min  + timbre_10_min, family = binomial, data = SongsTrain)
 summary(Model_2)
+AIC: 272.46
 
 cor(SongsTrain[,unlist(lapply(SongsTrain, is.numeric))])
 
 res =predict(Model_1, SongsTrain, type = "response" )
-table(res)
-result = ifelse(res > 0.5, 1, 0)
-table(result)
 table(ActualValue = SongsTrain$Top10, PredictedValue = res >0.5)
+accuracy=(416+13)/nrow(SongsTrain)  #0.8881988
 
 res =predict(Model_2, SongsTrain, type = "response" )
 table(ActualValue = SongsTrain$Top10, PredictedValue = res >0.5)
