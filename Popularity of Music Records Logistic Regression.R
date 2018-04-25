@@ -52,14 +52,19 @@ cor(SongsTrain[,unlist(lapply(SongsTrain, is.numeric))])
 
 res =predict(Model_1, SongsTrain, type = "response" )
 table(ActualValue = SongsTrain$Top10, PredictedValue = res >0.5)
-accuracy=(416+13)/nrow(SongsTrain)  #0.8881988
+accuracy=(416+13)/nrow(SongsTrain)  #0.9171843
+
+res_Test =predict(Model_1, SongsTest, type = "response" )
+table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
+accuracy=(307+20)/nrow(SongsTest)
+accuracy #0.8766756
 
 res =predict(Model_2, SongsTrain, type = "response" )
 table(ActualValue = SongsTrain$Top10, PredictedValue = res >0.5)
-accuracy=(417+24)/nrow(SongsTrain)
-accuracy :0.9130435
+accuracy=(416+13)/nrow(SongsTrain)
+accuracy #0.8881988
 
 res_Test =predict(Model_2, SongsTest, type = "response" )
 table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
-accuracy=(309+20)/nrow(SongsTest)
-accuracy
+accuracy=(305+19)/nrow(SongsTest)
+accuracy #0.8686327
