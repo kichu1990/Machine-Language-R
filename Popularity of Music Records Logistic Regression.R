@@ -84,3 +84,22 @@ res_Test =predict(Model_3, SongsTest, type = "response" )
 table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
 accuracy=(309+22)/nrow(SongsTest)
 accuracy #0.8686327
+
+library(randomForest)
+bestmtry = tuneRF(SongsTrain, SongsTrain$Top10, stepFactor = 1.2, improve = 0.01, trace = TRUE , plot = T)
+rf=randomForest(SongsTrain$Top10~.,data = SongsTrain, ntree=500,nodesize=2,mtry=7)
+varImpPlot(rf)
+
+Model_4=glm(Top10 ~ timbre_0_max + timbre_0_min,
+            family = binomial, data = SongsTrain)
+summary(Model_4)
+
+res =predict(Model_4, SongsTrain, type = "response" )
+table(ActualValue = SongsTrain$Top10, PredictedValue = res >0.5)
+accuracy=(422+11)/nrow(SongsTrain)
+accuracy #0.8964803
+
+res_Test =predict(Model_4, SongsTest, type = "response" )
+table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
+accuracy=(312+5)/nrow(SongsTest)
+accuracy 0.849866
