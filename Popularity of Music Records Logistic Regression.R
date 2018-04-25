@@ -42,14 +42,6 @@ Model_1=glm(Top10~.,data=SongsTrain,family = binomial)
 summary(Model_1)
 AIC: 291.46
 
-#Build Model with all Significant vriables
-Model_2=glm(Top10 ~ timesignature + pitch + timbre_0_min  + timbre_1_min + timbre_3_min + timbre_3_max + 
-      timbre_4_min + timbre_6_min  + timbre_10_min, family = binomial, data = SongsTrain)
-summary(Model_2)
-AIC: 272.46
-
-cor(SongsTrain[,unlist(lapply(SongsTrain, is.numeric))])
-
 res =predict(Model_1, SongsTrain, type = "response" )
 table(ActualValue = SongsTrain$Top10, PredictedValue = res >0.5)
 accuracy=(416+13)/nrow(SongsTrain)  #0.9171843
@@ -59,6 +51,12 @@ table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
 accuracy=(307+20)/nrow(SongsTest)
 accuracy #0.8766756
 
+#Build Model with all Significant vriables
+Model_2=glm(Top10 ~ timesignature + pitch + timbre_0_min  + timbre_1_min + timbre_3_min + timbre_3_max + 
+      timbre_4_min + timbre_6_min  + timbre_10_min, family = binomial, data = SongsTrain)
+summary(Model_2)
+AIC: 272.46
+
 res =predict(Model_2, SongsTrain, type = "response" )
 table(ActualValue = SongsTrain$Top10, PredictedValue = res >0.5)
 accuracy=(416+13)/nrow(SongsTrain)
@@ -67,4 +65,22 @@ accuracy #0.8881988
 res_Test =predict(Model_2, SongsTest, type = "response" )
 table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
 accuracy=(305+19)/nrow(SongsTest)
+accuracy #0.8686327
+cor(SongsTrain[,unlist(lapply(SongsTrain, is.numeric))])
+
+res_Test =predict(Model_2, SongsTest, type = "response" )
+
+Model_3=glm(Top10 ~ timesignature + pitch + timbre_0_min + timbre_0_max + timbre_1_min + timbre_3_min + timbre_3_max + 
+      timbre_4_min + timbre_6_min + timbre_8_max + timbre_10_min, family = binomial, data = SongsTrain)
+summary(Model_3)
+AIC: 256.89
+
+res =predict(Model_3, SongsTrain, type = "response" )
+table(ActualValue = SongsTrain$Top10, PredictedValue = res >0.5)
+accuracy=(416+19)/nrow(SongsTrain)
+accuracy #0.9006211
+
+res_Test =predict(Model_3, SongsTest, type = "response" )
+table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
+accuracy=(309+22)/nrow(SongsTest)
 accuracy #0.8686327
