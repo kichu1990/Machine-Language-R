@@ -139,17 +139,14 @@ summary(Model1)
 
 #Checking accuracy on Train Data
 res =predict(Model1,train_loans,type = "response")
-table(res)
-result = ifelse(res > 0.5, 1, 0)
-table(result)
-table(ActualValue = train_loans$not.fully.paid, PredictedValue = res >0.5))
-(5580+44)/nrow(train_loans) #0.838777
+table(ActualValue = train_loans$not.fully.paid, PredictedValue = res >0.5)
+(5598+44)/nrow(train_loans) #0.8414616
 
 #check accuracy on Test Data
 test_loans$pred_test=predict(Model1,newdata=test_loans,type="response")
 table(test_loans$not.fully.paid,test_loans$pred_test > 0.5)
 #Accuaracy Of the Model
-(2393+15)/nrow(test_loans) #0.8381483
+(2405+9)/nrow(test_loans) #0.8402367
 
 # Check the relation between the categorical variables
 table(train_loans$not.fully.paid,train_loans$credit.policy)
@@ -172,17 +169,13 @@ summary(Model2)
 
 #Checking accuracy on Train Data
 res =predict(Model2,train_loans,type = "response")
-table(res)
-result = ifelse(res > 0.5, 1, 0)
-table(result)
 table(ActualValue = train_loans$not.fully.paid, PredictedValue = res >0.5)
-(5580+43)/nrow(train_loans) #0.8386279
+(5600+43)/nrow(train_loans)  # 0.8416107
 
 #check accuracy on Test Data
 test_loans$pred_test=predict(Model2,newdata=test_loans,type="response")
 table(test_loans$not.fully.paid,test_loans$pred_test > 0.5)
-#Accuaracy Of the Model
-(2396+14)/nrow(test_loans) #0.8388444
+(2405+9)/nrow(test_loans)    # 0.8402367 
 
 Model1$xlevels[["delinq.2yrs"]] <- union(Model1$xlevels[["delinq.2yrs"]], levels(test_loans$delinq.2yrs))
 
