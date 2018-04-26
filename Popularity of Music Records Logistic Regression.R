@@ -108,10 +108,29 @@ cor(SongsTrain$loudness,SongsTrain$energy) #0.778218
 
 #Create Model 2, which is Model 1 without the independent variable "loudness". 
 Model_1_log=glm(Top10 ~ .- loudness, data=SongsTrain, family=binomial)
-summary(Model_1_log)
+summary(Model_1_log) #289.66
 
 #Look at the summary of SongsLog2, and inspect the coefficient of the variable "energy". What do you observe?
 #The coefficient estimate for energy is positive in Model 2, suggesting that songs with higher energy levels tend to be more popular. 
 #However, note that the variable energy is not significant in this model.
 
 #create Model, which should be exactly like Model 1, but without the variable "energy".
+Model_2_log=glm(Top10 ~ .- energy, data=SongsTrain, family=binomial)
+summary(Model_1_log) #289.46
+
+#Looking at the output of summary(Model_2_log), we can see that loudness has a positive coefficient estimate, meaning that our model 
+#predicts that songs with heavier instrumentation tend to be more popular. This is the same conclusion we got from Model 2.
+
+#Make predictions on the test set using Model 3. What is the accuracy of Model 3 on the test set, using a threshold of 0.45? 
+#(Compute the accuracy as a number between 0 and 1.)
+res_Test =predict(Model_2_log, SongsTest, type = "response" )
+table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.45)
+accuracy=(302+25)/nrow(SongsTest)#0.8766756
+
+#What would the accuracy of the baseline model be on the test set? 
+table(SongsTest$Top10)
+314/(314+59) #0.8418231
+
+#What is the sensitivity of Model 3 on the test set, using a threshold of 0.45?
+
+#What is the specificity of Model 3 on the test set, using a threshold of 0.45?
