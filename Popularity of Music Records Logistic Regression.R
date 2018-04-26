@@ -68,7 +68,7 @@ accuracy=(305+19)/nrow(SongsTest)
 accuracy #0.8686327
 cor(SongsTrain[,unlist(lapply(SongsTrain, is.numeric))])
 
-res_Test =predict(Model_2, SongsTest, type = "response" )
+#stepwise Logistic Regression
 
 Model_3=glm(Top10 ~ timesignature + pitch + timbre_0_min + timbre_0_max + timbre_1_min + timbre_3_min + timbre_3_max + 
       timbre_4_min + timbre_6_min + timbre_8_max + timbre_10_min, family = binomial, data = SongsTrain)
@@ -83,15 +83,14 @@ accuracy #0.9006211
 res_Test =predict(Model_3, SongsTest, type = "response" )
 table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
 accuracy=(309+22)/nrow(SongsTest)
-accuracy #0.8686327
+accuracy #0.8873995
 
 library(randomForest)
 bestmtry = tuneRF(SongsTrain, SongsTrain$Top10, stepFactor = 1.2, improve = 0.01, trace = TRUE , plot = T)
 rf=randomForest(SongsTrain$Top10~.,data = SongsTrain, ntree=500,nodesize=2,mtry=7)
 varImpPlot(rf)
 
-Model_4=glm(Top10 ~ timbre_0_max + timbre_0_min,
-            family = binomial, data = SongsTrain)
+Model_4=glm(Top10 ~ timbre_0_max + timbre_0_min+loudness,family = binomial, data = SongsTrain)
 summary(Model_4)
 
 res =predict(Model_4, SongsTrain, type = "response" )
