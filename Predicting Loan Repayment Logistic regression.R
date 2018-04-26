@@ -185,6 +185,14 @@ Model3=glm(not.fully.paid~credit.policy + purpose + installment +
 summary(Model3)
 #AIC: 5530.1
 
+res =predict(Model3,train_loans,type = "response")
+table(ActualValue = train_loans$not.fully.paid, PredictedValue = res >0.5)
+(5601+43)/nrow(train_loans)   # 0.8417599
+
+test_loans$pred_test=predict(Model3,newdata=test_loans,type="response")
+table(test_loans$not.fully.paid,test_loans$pred_test > 0.5)
+(2400+14)/nrow(test_loans)    # 0.8402367
+
 #What is the accuracy of the logistic regression model? 
 test_loans$pred_test=predict(Model1,newdata=test_loans,type="response")
 View(test_loans)
