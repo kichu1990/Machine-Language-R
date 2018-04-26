@@ -102,3 +102,16 @@ res_Test =predict(Model_4, SongsTest, type = "response" )
 table(ActualValue = SongsTest$Top10, PredictedValue = res_Test >0.5)
 accuracy=(312+5)/nrow(SongsTest)
 accuracy 0.849866
+
+#What is the correlation between the variables "loudness" and "energy" in the training set?
+cor(SongsTrain$loudness,SongsTrain$energy) #0.778218
+
+#Create Model 2, which is Model 1 without the independent variable "loudness". 
+Model_1_log=glm(Top10 ~ .- loudness, data=SongsTrain, family=binomial)
+summary(Model_1_log)
+
+#Look at the summary of SongsLog2, and inspect the coefficient of the variable "energy". What do you observe?
+#The coefficient estimate for energy is positive in Model 2, suggesting that songs with higher energy levels tend to be more popular. 
+#However, note that the variable energy is not significant in this model.
+
+#create Model, which should be exactly like Model 1, but without the variable "energy".
