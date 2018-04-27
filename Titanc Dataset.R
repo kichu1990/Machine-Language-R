@@ -87,3 +87,12 @@ Titanic$Title=sub(" ","",Titanic$FirstName)
 ****************************************************************************************************************************************
 train_new=train[,-2]
 df=rbind(train_new,test)
+
+View(df)
+
+#find the Number of NA in each Variable
+sapply(df,function(x){sum(is.na(x))})
+
+#Handling the NA in the Variable
+
+
