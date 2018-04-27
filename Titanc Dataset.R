@@ -85,3 +85,5 @@ Titanic$LastName=sub(" ","",Titanic$FirstName)
 Titanic$Title=sub(" ","",Titanic$FirstName)
 
 ****************************************************************************************************************************************
+train_new=train[,-2]
+df=rbind(train_new,test)
