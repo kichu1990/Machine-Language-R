@@ -83,3 +83,5 @@ Titanic$Title=sapply(Titanic$Name,function(x){strsplit(x,"[,.]")[[1]][2]})
 Titanic$FirstName=sub(" ","",Titanic$FirstName)
 Titanic$LastName=sub(" ","",Titanic$FirstName)
 Titanic$Title=sub(" ","",Titanic$FirstName)
+
+****************************************************************************************************************************************
