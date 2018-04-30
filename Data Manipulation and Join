@@ -1,0 +1,33 @@
+df1 = data.frame(CustomerNo = c(1:6), Product = c(rep("Toaster", 3), rep("Radio", 3)))
+df2 = data.frame(CustomerId = c(2, 4, 6), State = c(rep("Alabama", 2), rep("Ohio", 1)))
+df1
+df2
+
+#Outer join:
+merge(x = df1, y = df2, by = "CustomerId", all = TRUE)
+#Left join:
+merge(x = df1, y = df2, by = "CustomerId", all.x = TRUE) 
+#Right join
+merge(x = df1, y = df2, by = "CustomerId", all.y = TRUE)
+#Inner join
+merge(x = df1, y = df2, by = "CustomerId")
+merge(x=df1,y=df2,by.x = "CustomerNo",by.y = "CustomerId",all.x=T)
+colnames(df1)[1]="A"
+df1
+
+#scatter plot
+Age=rnorm(10,10,2)
+Income=runif(10)
+plot(Age,Income,type="b",xlab="ajdnjladncj",main="SCATTER PLOT")
+
+#normal distribution examples
+pnorm(80,80,5,lower.tail = F)
+pnorm(90,80,5,lower.tail = F)
+
+#example 3
+green=pnorm(600,580,100,lower.tail=F)
+pink=pnorm(500,580,100,lower.tail = T)
+answer=1-(green+pink)
+answer
+#another way
+pnorm(600,580,100,lower.tail = T)-pnorm(500,580,100,lower.tail = T)
