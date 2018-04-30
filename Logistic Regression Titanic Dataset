@@ -85,3 +85,96 @@ Titanic$LastName=sub(" ","",Titanic$FirstName)
 Titanic$Title=sub(" ","",Titanic$FirstName)
 
 ****************************************************************************************************************************************
+#find the Number of NA in each Variable
+sapply(Titanic_Train,function(x){sum(is.na(x))})
+
+#Fill NA for variable Age 
+hist(Titanic_Train$Age)
+Titanic_Train$Age[is.na(Titanic_Train$Age)]=median(Titanic_Train$Age,na.rm=T)
+
+#Fill NA for variable Embarked
+table(Titanic_Train$Embarked)
+Titanic_Train$Embarked[is.na(Titanic_Train$Embarked)]='S'
+
+#Identify the Outliers if any
+boxplot(Titanic_Train$Fare)
+Q1_Titanic_Train=quantile(Titanic_Train$Fare,0.25)
+Q2_Titanic_Train=quantile(Titanic_Train$Fare,0.50)
+Q3_Titanic_Train=quantile(Titanic_Train$Fare,0.75)
+IQR_Titanic_Train=Q3_Titanic_Train-Q1_Titanic_Train
+Q3_Titanic_Train+(1.5*IQR_Titanic_Train)
+Titanic_Train$Fare=sapply(Titanic_Train$Fare,function(x){ ifelse(x>65.6344,65.6344,x)})
+
+boxplot(Titanic_Train$Age)
+Q1_Age=quantile(Titanic_Train$Age,0.25)
+Q2_Age=quantile(Titanic_Train$Age,0.50)
+Q3_Age=quantile(Titanic_Train$Age,0.75)
+IQR_Age=Q3_Age-Q1_Age
+Q3_Age+(1.5*IQR_Age)
+Titanic_Train$Age=sapply(Titanic_Train$Age,function(x){ ifelse(x>54.5,54.5,x)})
+
+str(Titanic_Train)
+Titanic_Train$Survived=as.factor(Titanic_Train$Survived)
+Titanic_Train$Embarked=as.factor(Titanic_Train$Embarked)
+Titanic_Train$Pclass=as.factor(Titanic_Train$Pclass)
+Titanic_Train$SibSp=as.factor(Titanic_Train$SibSp)
+Titanic_Train$Parch=as.factor(Titanic_Train$Parch)
+Titanic_Train$Sex=sapply(Titanic_Train$Sex,function(x){ ifelse(x=='male',1,0)})
+Titanic_Train$Sex=as.character(Titanic_Train$Sex)
+Titanic_Train$Sex=as.factor(Titanic_Train$Sex)
+
+
+Titanic_Train_New=Titanic_Train[,-c(1,4,9,11)]
+View(Titanic_Train_New)
+summary(Titanic_Train_New)
+str(Titanic_Train)
+
+Titanic_Train[Titanic_Train==""]=NA
+Titanic_Train_New[!complete.cases(Titanic_Train_New),]
+
+#Convert all character variable into factor in one line:
+library(dplyr)
+Titanic_Train_New=data_char %>% mutate_if(is.character, as.factor)
+
+library(randomForest)
+bestmtry = tuneRF(Titanic_Train_New,Titanic_Train_New$Survived, 
+                  stepFactor = 1.2, improve = 0.01, trace = TRUE , plot = TRUE)
+rf=randomForest(Survived~.,data = Titanic_Train_New, ntree=500,nodesize=2,mtry=2)
+print(rf)
+varImpPlot(rf)
+
+#Build Model with all Independent Variables
+Model1=glm(Survived~.,data=Titanic_Train_New,family="binomial")
+summary(Model1) #804.31
+
+#Build Model with all  Significance  Variables
+Model2=glm(Survived~.-Parch-Embarked-Fare,data=Titanic_Train_New,family="binomial")
+summary(Model2) #800.51
+
+Model3=glm(Survived~Pclass + Sex + Age + SibSp + Fare,data=Titanic_Train_New,family="binomial")
+summary(Model3) #800.2
+
+# Check the relation between the categorical variables
+table(Titanic_Train_New$Survived,Titanic_Train_New$Parch)
+chisq.test(table(Titanic_Train_New$Survived,Titanic_Train_New$Parch))
+
+table(Titanic_Train_New$Survived,Titanic_Train_New$Embarked)
+chisq.test(table(Titanic_Train_New$Survived,Titanic_Train_New$Embarked))
+
+# To Calculate the ROC Curve to come up with a threshold Value #
+library(ROCR)
+rocpredict=prediction(res, Titanic_Train_New$Survived)
+rocpor=performance(ROCPREDICT, "tpr", "fpr")
+plot(ROCPOR, colorize = "TRUE", print.cutoffs.at= seq(0,1,0.1), text.adj = c(-0.2, 1.7))
+
+res =predict(Model1,Titanic_Train_New,type = "response")
+table(ActualValue = Titanic_Train_New$Survived, PredictedValue = res >0.4)
+(448+265)/nrow(Titanic_Train_New) #0.8002245
+
+res =predict(Model2,Titanic_Train_New,type = "response")
+table(ActualValue = Titanic_Train_New$Survived, PredictedValue = res >0.4)
+(446+268)/nrow(Titanic_Train_New) #0.8013468
+
+res =predict(Model3,Titanic_Train_New,type = "response")
+table(ActualValue = Titanic_Train_New$Survived, PredictedValue = res >0.4)
+(447+263)/nrow(Titanic_Train_New) #0.7968575
