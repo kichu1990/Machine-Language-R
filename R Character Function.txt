@@ -1,1 +1,64 @@
-dfvgdfg
+#Remove multiple spaces from a string and keep only a single space Using qdap package.
+x= "deepanshu    bhalla"
+library(qdap)
+Trim(clean(x))
+
+#trimws() function is used to remove leading and/or trailing spaces
+trimws(x, which = c("both", "left", "right"))
+
+#To repeat the character number of times
+strrep("x",3)
+
+#Check whether a sub-string exists in a string.
+x = c("Aon Hewitt", "Aon Risk", "Hewitt", "Google")
+library(stringr)
+str_detect(x,"Aon")
+
+#The %in% keyword is used to select multiple values
+x = sample(LETTERS,100, replace = TRUE)
+x[x %in% c("A","B","C")]
+
+#grepl function to match the pattern string
+x = c("Deepanshu", "Dave", "Sandy", "drahim", "Jades")
+
+#Keeping characters starts with the letter 'D'
+x[grepl("^D",x)]
+It does not return 'drahim' as pattern mentioned above is case-sensitive.
+
+#To make it case-insensitive, we can add (?i) before ^D.
+x[grepl("(?i)^d",x)]
+
+#Keeping characters do not start with the letter 'D'
+x[!grepl("(?i)^d",x)]
+
+#Keeping characters end with 'S'
+x[grepl("s$",x)]
+
+#Keeping characters contain "S"
+x[grepl("(?i)*s",x)]
+
+#str_to_title() function converts first letter in a string to uppercase
+x = "i love r programming"
+library(stringr)
+str_to_title(x)
+
+#pull a first or last word from a character string.
+word(string, position of word to extract, separator) 
+x = "I love R Programming"
+library(stringr)
+word(x, 1,sep = " ")
+word(x,-1,sep = " ")
+
+#replace all values of a vector
+cols = c("x1", "x2", "x3")
+sub("x", "Year", cols)
+
+#The paste function is used to join two strings.
+#paste (objects, sep = " ", collapse = NULL)
+#The sep= keyword denotes a separator or delimiter. The default separator is a single space. 
+#The collapse= keyword is used to separate the result
+
+x = "Deepanshu"
+y ="Bhalla"
+paste(x, y)
+paste(x, y, sep = ",") 
